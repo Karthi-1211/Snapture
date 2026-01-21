@@ -16,27 +16,27 @@ export default defineConfig(({ mode }) => ({
     componentTagger(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'placeholder.svg'],
+      includeAssets: ['favicon.ico', 'snapture-logo.svg'],
       manifest: {
         name: 'Snapture',
         short_name: 'Snapture',
         description: 'Professional Photobooth Experience',
-        theme_color: '#000000',
+        theme_color: '#6366F1',
         background_color: '#000000',
         display: 'standalone',
         icons: [
           {
-            src: 'placeholder.svg',
+            src: 'snapture-logo.svg',
             sizes: '192x192',
             type: 'image/svg+xml'
           },
           {
-            src: 'placeholder.svg',
+            src: 'snapture-logo.svg',
             sizes: '512x512',
             type: 'image/svg+xml'
           },
           {
-            src: 'placeholder.svg',
+            src: 'snapture-logo.svg',
             sizes: '512x512',
             type: 'image/svg+xml',
             purpose: 'any maskable'

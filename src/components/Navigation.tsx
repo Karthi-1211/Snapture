@@ -25,6 +25,9 @@ const Navigation = () => {
             <span className="bg-gradient-to-r from-blue-700 to-purple-700 bg-clip-text text-transparent">
               Snapture
             </span>
+            <span className="bg-gradient-to-r from-pink-500 to-purple-500 text-[10px] text-white px-1.5 py-0.5 rounded-md font-black tracking-tighter shadow-md">
+              PRO
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -34,8 +37,8 @@ const Navigation = () => {
                 key={item.name}
                 to={item.path}
                 className={`text-sm font-semibold transition-all hover:text-blue-600 relative py-1 ${location.pathname === item.path
-                    ? "text-blue-600"
-                    : "text-gray-600"
+                  ? "text-blue-600"
+                  : "text-gray-600"
                   }`}
               >
                 {item.name}
@@ -76,8 +79,8 @@ const Navigation = () => {
                 to={item.path}
                 onClick={() => setIsMenuOpen(false)}
                 className={`block px-3 py-4 text-lg font-bold rounded-xl transition-all ${location.pathname === item.path
-                    ? "bg-blue-50 text-blue-600"
-                    : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                  ? "bg-blue-50 text-blue-600"
+                  : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
                   }`}
               >
                 {item.name}
