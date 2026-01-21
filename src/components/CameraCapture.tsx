@@ -124,9 +124,8 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
               </div>
 
               <div
-                className={`absolute inset-0 bg-gradient-to-r from-red-500 to-red-600 transition-transform duration-1000 ${
-                  showCurtain ? "translate-x-0" : "translate-x-full"
-                }`}
+                className={`absolute inset-0 bg-gradient-to-r from-red-500 to-red-600 transition-transform duration-1000 ${showCurtain ? "translate-x-0" : "translate-x-full"
+                  }`}
                 style={{
                   backgroundImage:
                     "repeating-linear-gradient(90deg, #dc2626 0px, #dc2626 8px, #b91c1c 8px, #b91c1c 16px)",
@@ -174,68 +173,66 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
   }
 
   return (
-    <div className="space-y-6 animate-fade-in pb-24">
-      <Card className="p-6 bg-gradient-to-br from-pink-50 to-purple-50 border-2 border-pink-200">
-        <div className="text-center mb-4">
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">
-            📸 Photo {currentPhotoIndex + 1} of {photoCount} – {selectedLayout}
-          </h3>
-          <p className="text-lg text-gray-700">
-            🎯 Capture or upload your photos!{" "}
-            {photoCount - currentPhotoIndex} photos remaining
-          </p>
-        </div>
+    <div className="space-y-4 md:space-y-6 animate-fade-in pb-20">
+      <div className="text-center md:text-left mb-4">
+        <h3 className="text-lg md:text-2xl font-black text-white mb-1">
+          📸 Shot {currentPhotoIndex + 1} of {photoCount}
+        </h3>
+        <p className="text-xs md:text-lg text-white/60">
+          {photoCount - currentPhotoIndex} more to go!
+        </p>
+      </div>
 
-        <CameraControls
-          timerDuration={timerDuration}
-          setTimerDuration={setTimerDuration}
-          isCapturing={isCapturing}
-          currentPhotoIndex={currentPhotoIndex}
-          photoCount={photoCount}
-          isMinimized={isMinimized}
-          setIsMinimized={setIsMinimized}
-          onStartCountdown={startCountdown}
-          onPhotosUpload={handlePhotosUpload}
-        />
-      </Card>
-
-      {cameraStarted && (
-        <div className="relative max-w-4xl mx-auto">
-          <div
-            className={`relative overflow-hidden rounded-2xl shadow-2xl bg-black transition-all duration-300 ${
-              isMinimized ? "w-64 h-48" : "w-full h-auto"
+      <div className="relative mx-auto">
+        <div
+          className={`relative overflow-hidden rounded-2xl md:rounded-3xl shadow-2xl bg-black border-2 border-white/5 transition-all duration-300 ${isMinimized ? "w-32 h-24 md:w-64 md:h-48" : "w-full aspect-[4/3] md:aspect-video"
             }`}
-          >
-            {isLoading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
-                <div className="animate-spin rounded-full h-8 w-8 border-4 border-white border-t-transparent"></div>
-              </div>
-            )}
+        >
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
+              <div className="animate-spin rounded-full h-8 w-8 border-4 border-white border-t-transparent"></div>
+            </div>
+          )}
 
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              muted
-              className="w-full h-auto object-cover"
-              style={{
-                filter: getFilterCSS(selectedFilter),
-                minHeight: isMinimized ? "48px" : "400px",
-                maxHeight: isMinimized ? "48px" : "600px",
-                background: "#000",
-              }}
-            />
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted
+            className="w-full h-full object-cover"
+            style={{
+              filter: getFilterCSS(selectedFilter),
+              background: "#000",
+            }}
+          />
 
-            <CameraCountdown countdown={countdown} />
+          <CameraCountdown countdown={countdown} />
 
+          {!isMinimized && (
             <FilterBar
               filters={filters}
               selectedFilter={selectedFilter}
               onFilterSelect={setSelectedFilter}
             />
-          </div>
+          )}
         </div>
-      )}
+
+        {cameraStarted && (
+          <div className="mt-4">
+            <CameraControls
+              timerDuration={timerDuration}
+              setTimerDuration={setTimerDuration}
+              isCapturing={isCapturing}
+              currentPhotoIndex={currentPhotoIndex}
+              photoCount={photoCount}
+              isMinimized={isMinimized}
+              setIsMinimized={setIsMinimized}
+              onStartCountdown={startCountdown}
+              onPhotosUpload={handlePhotosUpload}
+            />
+          </div>
+        )}
+      </div>
 
       <PhotoPreview capturedPhotos={capturedPhotos} photoCount={photoCount} />
 

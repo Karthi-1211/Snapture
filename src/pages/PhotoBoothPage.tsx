@@ -314,50 +314,49 @@ const PhotoBoothPage = () => {
   /* ────────────────────────── JSX ────────────────────────── */
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 font-inter relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 font-inter relative pb-20">
       {/* animated background blobs */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-pink-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-20 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl animate-pulse delay-2000" />
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-40 h-40 md:w-72 md:h-72 bg-pink-500/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-10 w-40 h-40 md:w-80 md:h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 md:py-8">
         {/* header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col md:flex-row items-center justify-between mb-6 md:mb-8 gap-4">
           <Button
             onClick={resetPhotoBooth}
-            variant="outline"
+            variant="ghost"
             size="sm"
-            className="border-white/30 hover:bg-white/10 backdrop-blur-sm"
+            className="text-white hover:bg-white/10 self-start"
           >
             <Link
               to="/home"
-              className="flex items-center hover:text-white transition-colors group"
+              className="flex items-center group"
             >
               <ArrowLeft className="h-5 w-5 mr-2 group-hover:-translate-x-1 transition-transform" />
-              Back to Home
+              Exit Booth
             </Link>
           </Button>
 
-          <div className="flex items-center space-x-4">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
-              ✨ Snapture
+          <div className="flex items-center space-x-3 md:space-x-4">
+            <h1 className="text-2xl md:text-3xl font-black bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
+              SNAPTURE
             </h1>
             <Button
               onClick={resetPhotoBooth}
               variant="outline"
               size="sm"
-              className="border-white/30 hover:bg-white/10 backdrop-blur-sm"
+              className="border-white/30 text-white hover:bg-white/10 backdrop-blur-sm rounded-full text-xs md:text-sm"
             >
-              🔄 Start Over
+              🔄 Reset
             </Button>
           </div>
         </div>
 
         {/* progress indicator */}
-        <div className="flex justify-center mb-12">
-          <div className="flex items-center space-x-4">
+        <div className="flex justify-center mb-8 md:mb-12 overflow-x-auto pb-2 no-scrollbar">
+          <div className="flex items-center space-x-2 md:space-x-4">
             {["layout", "camera", "frame", "download"].map((step, index) => {
               const isActive = currentStep === step;
               const isCompleted =
@@ -368,23 +367,20 @@ const PhotoBoothPage = () => {
               return (
                 <div key={step} className="flex items-center">
                   <div
-                    className={`relative w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-300 ${isActive
-                      ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg scale-110"
-                      : isCompleted
-                        ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg"
-                        : "bg-white/20 text-white/60 backdrop-blur-sm"
+                    className={`relative w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-sm md:text-lg transition-all duration-300 ${isActive
+                        ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg scale-110"
+                        : isCompleted
+                          ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg"
+                          : "bg-white/10 text-white/40 backdrop-blur-sm"
                       }`}
                   >
-                    {isCompleted ? "✅" : index + 1}
-                    {isActive && (
-                      <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full blur-lg opacity-50 animate-pulse" />
-                    )}
+                    {isCompleted ? "✓" : index + 1}
                   </div>
                   {index < 3 && (
                     <div
-                      className={`w-16 h-1 mx-2 rounded-full transition-all duration-300 ${isCompleted
-                        ? "bg-gradient-to-r from-green-500 to-emerald-500"
-                        : "bg-white/20"
+                      className={`w-4 md:w-16 h-0.5 md:h-1 mx-1 md:mx-2 rounded-full transition-all duration-300 ${isCompleted
+                          ? "bg-gradient-to-r from-green-500 to-emerald-500"
+                          : "bg-white/10"
                         }`}
                     />
                   )}
@@ -395,104 +391,96 @@ const PhotoBoothPage = () => {
         </div>
 
         {/* card wrapper */}
-        <Card className="p-8 shadow-2xl bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl">
-          <div className="text-center mb-8">
-            <h2 className="text-4xl font-bold text-white mb-4">
+        <div className="shadow-2xl bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl md:rounded-3xl p-4 md:p-8">
+          <div className="text-center mb-6 md:mb-8">
+            <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-2 md:mb-4">
               {stepTitles[currentStep]}
             </h2>
-            <p className="text-xl text-white/80 mb-6">
+            <p className="text-sm md:text-xl text-white/70 mb-4 md:mb-6">
               {stepDescriptions[currentStep]}
             </p>
-            <div className="w-32 h-1 bg-gradient-to-r from-pink-500 to-purple-500 mx-auto rounded-full" />
+            <div className="w-16 md:w-32 h-1 bg-gradient-to-r from-pink-500 to-purple-500 mx-auto rounded-full" />
           </div>
 
           {/* step content */}
-          {currentStep === "layout" && (
-            <LayoutSelector onLayoutSelect={handleLayoutSelect} />
-          )}
+          <div className="animate-fade-in">
+            {currentStep === "layout" && (
+              <LayoutSelector onLayoutSelect={handleLayoutSelect} />
+            )}
 
-          {currentStep === "camera" && (
-            <CameraCapture
-              selectedLayout={selectedLayout}
-              photoCount={photoCount}
-              onAllPhotosCapture={handleAllPhotosCapture}
-            />
-          )}
+            {currentStep === "camera" && (
+              <CameraCapture
+                selectedLayout={selectedLayout}
+                photoCount={photoCount}
+                onAllPhotosCapture={handleAllPhotosCapture}
+              />
+            )}
 
-          {currentStep === "frame" && (
-            <FrameColorSelector
-              photos={capturedPhotos}
-              filter={selectedFilter}
-              onFrameColorSelect={handleFrameColorSelect}
-            />
-          )}
+            {currentStep === "frame" && (
+              <FrameColorSelector
+                photos={capturedPhotos}
+                filter={selectedFilter}
+                onFrameColorSelect={handleFrameColorSelect}
+              />
+            )}
 
-          {currentStep === "download" && (
-            <div className="text-center animate-fade-in">
-              <div className="mb-8">
-                <div
-                  className="max-w-md mx-auto bg-white/10 backdrop-blur-lg p-6 rounded-2xl shadow-2xl border border-white/20"
-                  style={{
-                    background: selectedFrameColor,
-                    padding: "10px",
-                  }}
-                >
-                  <div className="bg-white rounded-xl p-3 space-y-2 shadow-lg">
-                    {capturedPhotos.map((photo, index) => (
-                      <img
-                        key={index}
-                        src={photo}
-                        alt={`Photo ${index + 1}`}
-                        className="w-full h-50 rounded-lg object-cover"
-                        style={{ filter: getFilterCSS(selectedFilter) }}
-                      />
-                    ))}
-                    <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs p-2 rounded text-center font-medium">
-                      <div className="font-bold">📸 Snapture</div>
-                      <div>
-                        {new Date().toLocaleDateString()} •{" "}
-                        {new Date().toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
+            {currentStep === "download" && (
+              <div className="text-center">
+                <div className="mb-6 md:mb-8">
+                  <div
+                    className="max-w-[280px] md:max-w-md mx-auto p-2 rounded-xl shadow-2xl overflow-hidden"
+                    style={{
+                      background: selectedFrameColor,
+                    }}
+                  >
+                    <div className="bg-white rounded-lg p-2 space-y-1.5 shadow-inner">
+                      {capturedPhotos.map((photo, index) => (
+                        <div key={index} className="relative overflow-hidden rounded-md aspect-[4/3]">
+                          <img
+                            src={photo}
+                            alt={`Photo ${index + 1}`}
+                            className="w-full h-full object-cover"
+                            style={{ filter: getFilterCSS(selectedFilter) }}
+                          />
+                        </div>
+                      ))}
+                      <div className="bg-blue-600 text-white py-2 rounded text-center">
+                        <div className="font-black text-xs md:text-sm tracking-widest">SNAPTURE</div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="space-y-6">
-                <h3 className="text-3xl font-bold text-white mb-4">
-                  🎉 Your Amazing Photo Strip is Ready!
-                </h3>
-                <p className="text-xl text-white/80 mb-6">
-                  Perfect shots with beautiful styling&nbsp;&mdash; ready to
-                  share!
-                </p>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <Button
-                    onClick={downloadPhoto}
-                    size="lg"
-                    className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-10 py-6 text-xl font-bold shadow-2xl hover:shadow-green-500/50 transform hover:scale-105 transition-all duration-300 rounded-xl"
-                  >
-                    <Download className="mr-3 h-6 w-6" />
-                    📥 Save to Device
-                  </Button>
+                <div className="space-y-4 md:space-y-6">
+                  <h3 className="text-xl md:text-3xl font-black text-white">
+                    Ready to Share! ✨
+                  </h3>
 
-                  <Button
-                    onClick={handleShare}
-                    variant="outline"
-                    size="lg"
-                    className="border-2 border-white/30 text-white hover:bg-white/10 px-10 py-6 text-xl font-bold shadow-2xl backdrop-blur-sm transform hover:scale-105 transition-all duration-300 rounded-xl"
-                  >
-                    <Share2 className="mr-3 h-6 w-6" />
-                    📱 Share Strip
-                  </Button>
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <Button
+                      onClick={downloadPhoto}
+                      size="lg"
+                      className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white px-8 py-6 text-lg font-bold rounded-2xl shadow-xl transition-all active:scale-95"
+                    >
+                      <Download className="mr-2 h-5 w-5" />
+                      Save Photo
+                    </Button>
+
+                    <Button
+                      onClick={handleShare}
+                      variant="outline"
+                      size="lg"
+                      className="w-full sm:w-auto border-white/20 text-white hover:bg-white/10 px-8 py-6 text-lg font-bold rounded-2xl shadow-xl transition-all active:scale-95 backdrop-blur-md"
+                    >
+                      <Share2 className="mr-2 h-5 w-5" />
+                      Send to Friends
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-        </Card>
+            )}
+          </div>
+        </div>
 
         {/* hidden canvas for export */}
         <canvas ref={canvasRef} className="hidden" />

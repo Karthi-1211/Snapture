@@ -30,36 +30,23 @@ const colorPalette = [
 ];
 
 const getFilterCSS = (filter: string) => {
-  switch (filter) {
-    case "vintage":
-      return "sepia(0.8) contrast(1.2) brightness(1.1)";
-    case "bw":
-      return "grayscale(1)";
-    case "sepia":
-      return "sepia(1)";
-    case "vibrant":
-      return "contrast(1.4) saturate(1.8)";
-    case "cool":
-      return "hue-rotate(180deg) saturate(1.2)";
-    case "warm":
-      return "hue-rotate(30deg) saturate(1.3) brightness(1.1)";
-    case "noir":
-      return "grayscale(1) contrast(1.5) brightness(0.8)";
-    case "retro":
-      return "sepia(0.5) saturate(1.5) hue-rotate(20deg)";
-    case "dreamy":
-      return "blur(0.5px) brightness(1.2) saturate(0.8)";
-    case "neon":
-      return "saturate(2) contrast(1.3) hue-rotate(90deg)";
-    case "sunset":
-      return "sepia(0.3) saturate(1.4) hue-rotate(350deg)";
-    case "arctic":
-      return "saturate(0.8) brightness(1.1) hue-rotate(200deg)";
-    case "dramatic":
-      return "contrast(1.8) saturate(0.9) brightness(0.9)";
-    default:
-      return "none";
-  }
+  const filters: Record<string, string> = {
+    none: "none",
+    vintage: "sepia(0.8) contrast(1.2) brightness(1.1)",
+    bw: "grayscale(1)",
+    sepia: "sepia(1)",
+    vibrant: "contrast(1.4) saturate(1.8)",
+    cool: "hue-rotate(180deg) saturate(1.2)",
+    warm: "hue-rotate(30deg) saturate(1.3) brightness(1.1)",
+    noir: "grayscale(1) contrast(1.5) brightness(0.8)",
+    retro: "sepia(0.5) saturate(1.5) hue-rotate(20deg)",
+    dreamy: "blur(0.5px) brightness(1.2) saturate(0.8)",
+    neon: "saturate(2) contrast(1.3) hue-rotate(90deg)",
+    sunset: "sepia(0.3) saturate(1.4) hue-rotate(350deg)",
+    arctic: "saturate(0.8) brightness(1.1) hue-rotate(200deg)",
+    dramatic: "contrast(1.8) saturate(0.9) brightness(0.9)",
+  };
+  return filters[filter] || "none";
 };
 
 const FrameColorSelector: React.FC<FrameColorSelectorProps> = ({ photos, filter, onFrameColorSelect }) => {
@@ -67,108 +54,90 @@ const FrameColorSelector: React.FC<FrameColorSelectorProps> = ({ photos, filter,
   const [selectedCategory, setSelectedCategory] = useState("Basic");
 
   const categories = ["Basic", "Metallic", "Special"];
-  const filteredColors = colorPalette.filter((color) => color.category === selectedCategory);
-
-  const handleColorSelect = (color: string) => {
-    setSelectedColor(color);
-  };
-
-  const handleApplyColor = () => {
-    onFrameColorSelect(selectedColor);
-  };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 animate-fade-in items-start">
       {/* Color Palette Side */}
-      <div className="space-y-6">
-        <div className="text-center">
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">Choose Frame Color</h3>
-          <p className="text-pink-600">Select a color from the palette below</p>
-        </div>
-
-        {/* Category Tabs */}
-        <div className="flex justify-center space-x-2">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${selectedCategory === category
-                  ? "bg-purple-500 text-white shadow-lg"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+      <div className="space-y-6 md:space-y-10 order-2 lg:order-1">
+        <div className="flex justify-center flex-wrap gap-2">
+          {categories.map((cat) => (
+            <Button
+              key={cat}
+              variant={selectedCategory === cat ? "default" : "outline"}
+              onClick={() => setSelectedCategory(cat)}
+              className={`rounded-full px-6 transition-all font-black tracking-widest text-xs uppercase ${selectedCategory === cat
+                  ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-xl scale-105"
+                  : "border-white/20 text-white/70 hover:bg-white/10 backdrop-blur-md"
                 }`}
             >
-              {category}
-            </button>
+              {cat}
+            </Button>
           ))}
         </div>
 
-        {/* Color Grid */}
-        <div className="grid grid-cols-5 gap-3">
-          {filteredColors.map((colorItem) => (
-            <button
-              key={colorItem.name}
-              onClick={() => handleColorSelect(colorItem.color)}
-              className={`aspect-square rounded-lg border-4 transition-all hover:scale-110 ${selectedColor === colorItem.color
-                  ? "border-purple-500 shadow-lg"
-                  : "border-gray-300 hover:border-gray-400"
-                }`}
-              style={{
-                background: colorItem.isGradient ? colorItem.color : colorItem.color,
-              }}
-              title={colorItem.name}
-            />
-          ))}
+        <div className="grid grid-cols-4 sm:grid-cols-5 gap-3 md:gap-4">
+          {colorPalette
+            .filter((c) => c.category === selectedCategory)
+            .map((color) => (
+              <button
+                key={color.name}
+                className={`group relative flex flex-col items-center gap-2 focus:outline-none transition-all duration-300 ${selectedColor === color.color ? "scale-110" : "hover:scale-105"
+                  }`}
+                onClick={() => setSelectedColor(color.color)}
+              >
+                <div
+                  className={`w-12 h-12 md:w-16 md:h-16 rounded-2xl shadow-xl transition-all duration-300 border-2 overflow-hidden ${selectedColor === color.color ? "border-white" : "border-white/10"
+                    }`}
+                  style={{ background: color.color }}
+                />
+                <span className="text-[10px] md:text-xs text-white/60 font-black tracking-tight text-center uppercase">
+                  {color.name}
+                </span>
+              </button>
+            ))}
         </div>
 
-        <div className="text-center">
+        <div className="pt-4">
           <Button
-            onClick={handleApplyColor}
-            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-3 rounded-full font-semibold shadow-lg transform hover:scale-105 transition-all"
+            onClick={() => onFrameColorSelect(selectedColor)}
+            className="w-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white py-6 md:py-8 text-xl font-black rounded-2xl shadow-2xl transition-all active:scale-95"
           >
-            Apply Color to Frame
+            CONFIRM THIS FRAME
           </Button>
         </div>
       </div>
 
       {/* Preview Side */}
-      <div className="space-y-6">
-        <div className="text-center">
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">Preview</h3>
-          <p className="text-pink-600">See how your photos will look</p>
+      <div className="order-1 lg:order-2 space-y-6">
+        <div className="text-center md:text-left mb-6">
+          <h3 className="text-2xl md:text-3xl font-black text-white">LIVE PREVIEW</h3>
+          <p className="text-white/60">See your colors in real-time</p>
         </div>
 
-        <Card className="p-6 bg-white shadow-xl">
-          <div
-            className="mx-auto rounded-2xl shadow-2xl overflow-hidden"
-            style={{
-              background: selectedColor.includes("gradient") ? selectedColor : selectedColor,
-              padding: "10px",
-              maxWidth: "350px",
-            }}
-          >
-            <div className="bg-white rounded-xl p-3 space-y-4">
-              {photos.slice(0, 3).map((photo, index) => (
-                <div key={index} className="relative">
-                  <img
-                    src={photo}
-                    alt={`Photo ${index + 1}`}
-                    className="w-full h-32 object-cover rounded-lg"
-                    style={{ filter: getFilterCSS(filter) }}
-                  />
-                </div>
-              ))}
-
-              {/* Date and branding */}
-              <div className="text-center text-xs text-gray-500 font-medium pt-2 space-y-1">
-                <div className="font-bold text-gray-800">📸 Snapture</div>
-                <div>
-                  {new Date().toLocaleDateString()} •{" "}
-                  {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                </div>
+        <div
+          className="mx-auto rounded-3xl shadow-2xl overflow-hidden transition-all duration-500"
+          style={{
+            background: selectedColor,
+            padding: "12px",
+            maxWidth: "320px",
+          }}
+        >
+          <div className="bg-white rounded-2xl p-2 md:p-3 space-y-2 md:space-y-3 shadow-inner">
+            {photos.slice(0, 3).map((photo, index) => (
+              <div key={index} className="relative aspect-[4/3] rounded-xl overflow-hidden shadow-lg">
+                <img
+                  src={photo}
+                  alt={`Photo ${index + 1}`}
+                  className="w-full h-full object-cover"
+                  style={{ filter: getFilterCSS(filter) }}
+                />
               </div>
+            ))}
+            <div className="bg-blue-600 text-white py-2 rounded-xl text-center">
+              <div className="font-black text-xs tracking-widest uppercase italic">SNAPTURE MAGIC</div>
             </div>
           </div>
-        </Card>
+        </div>
       </div>
     </div>
   );

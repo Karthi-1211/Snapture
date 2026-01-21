@@ -95,28 +95,36 @@ const layouts = [
 
 const LayoutSelector: React.FC<LayoutSelectorProps> = ({ onLayoutSelect }) => {
   return (
-    <div className="space-y-8">
-      <div className="text-center">
-        <h3 className="text-2xl font-bold text-gray-900 mb-2">Choose Your Layout</h3>
-        <p className="text-gray-600">NOTE: You have 3 seconds for each shot</p>
-      </div>
-      
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 animate-fade-in">
+    <div className="space-y-6 md:space-y-8 animate-fade-in">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
         {layouts.map((layout) => (
-          <Card 
+          <div
             key={layout.id}
-            className="p-8 cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:scale-105 bg-gradient-to-br from-white to-gray-50 border-2 hover:border-pink-300"
+            className="group relative cursor-pointer"
             onClick={() => onLayoutSelect(layout.name, layout.photoCount)}
           >
-            <div className="text-center space-y-4">
-              <div className="flex justify-center items-center h-32">
-                {layout.preview}
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-500 to-purple-500 rounded-3xl blur opacity-25 group-hover:opacity-100 transition duration-500" />
+            <div className="relative p-6 md:p-8 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl transition-all duration-300 transform group-hover:-translate-y-2 group-active:scale-95 shadow-xl">
+              <div className="text-center space-y-4 md:space-y-6">
+                <div className="flex justify-center items-center h-28 md:h-32 transition-transform duration-500 group-hover:scale-110">
+                  <div className="shadow-2xl ring-4 ring-white/10 rounded-lg overflow-hidden">
+                    {layout.preview}
+                  </div>
+                </div>
+                <div>
+                  <h4 className="text-xl md:text-2xl font-black text-white group-hover:text-pink-400 transition-colors">
+                    {layout.name}
+                  </h4>
+                  <p className="text-white/60 text-xs md:text-sm mt-1">{layout.description}</p>
+                </div>
+                <div className="inline-block px-4 py-1.5 bg-white/10 rounded-full border border-white/5">
+                  <p className="text-pink-400 font-black text-xs md:text-sm tracking-widest uppercase">
+                    {layout.photoCount} Shots
+                  </p>
+                </div>
               </div>
-              <h4 className="text-xl font-bold text-gray-900">{layout.name}</h4>
-              <p className="text-gray-600 text-sm">{layout.description}</p>
-              <p className="text-pink-600 font-semibold text-xs">{layout.photoCount} Photos</p>
             </div>
-          </Card>
+          </div>
         ))}
       </div>
     </div>

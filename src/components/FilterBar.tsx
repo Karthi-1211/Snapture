@@ -1,3 +1,5 @@
+import React from "react";
+import { Button } from "./ui/button";
 import { Filter } from "@/types/camera";
 
 interface FilterBarProps {
@@ -6,22 +8,27 @@ interface FilterBarProps {
   onFilterSelect: (filterId: string) => void;
 }
 
-const FilterBar: React.FC<FilterBarProps> = ({ filters, selectedFilter, onFilterSelect }) => {
+const FilterBar: React.FC<FilterBarProps> = ({
+  filters,
+  selectedFilter,
+  onFilterSelect,
+}) => {
   return (
-    <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-black/80 rounded-full px-4 py-2 max-w-4xl">
-      <div className="flex space-x-2 min-w-max">
+    <div className="absolute bottom-4 left-0 right-0 px-4">
+      <div className="flex items-center space-x-2 overflow-x-auto no-scrollbar pb-2 pt-1">
         {filters.map((filter) => (
-          <button
+          <Button
             key={filter.id}
+            size="sm"
+            variant={selectedFilter === filter.id ? "default" : "secondary"}
             onClick={() => onFilterSelect(filter.id)}
-            className={`px-3 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap w-20 text-center ${
-              selectedFilter === filter.id 
-                ? 'bg-yellow-500 text-black' 
-                : 'bg-gray-700 text-white hover:bg-gray-600'
-            }`}
+            className={`flex-none rounded-full px-5 py-5 text-sm font-black capitalize transition-all duration-300 shadow-xl ${selectedFilter === filter.id
+                ? "bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 scale-110 border-2 border-white/50"
+                : "bg-black/40 text-white/90 hover:bg-black/60 backdrop-blur-xl border border-white/10"
+              }`}
           >
             {filter.name}
-          </button>
+          </Button>
         ))}
       </div>
     </div>

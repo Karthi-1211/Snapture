@@ -57,23 +57,22 @@ const CameraControls: React.FC<CameraControlsProps> = ({
   };
 
   return (
-    <>
-      {/* Top Controls */}
-      <div className="flex justify-center items-center space-x-6 mb-6">
-        <div className="flex items-center space-x-2">
-          <Timer className="h-5 w-5 text-gray-600" />
-          <span className="text-sm font-medium text-gray-700">Timer:</span>
+    <div className="flex flex-col items-center space-y-4 md:space-y-6 w-full max-w-lg mx-auto">
+      {/* Top row: Timer & Upload */}
+      <div className="flex flex-wrap items-center justify-center gap-3 w-full">
+        <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-2xl border border-white/10 flex-1 min-w-[140px] justify-center">
+          <Timer className="h-4 w-4 text-pink-400" />
           <Select
             value={timerDuration.toString()}
             onValueChange={(value) => setTimerDuration(parseInt(value))}
           >
-            <SelectTrigger className="w-32">
+            <SelectTrigger className="w-24 h-8 border-none bg-transparent text-white font-bold text-xs focus:ring-0">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="3">3 seconds</SelectItem>
-              <SelectItem value="5">5 seconds</SelectItem>
-              <SelectItem value="10">10 seconds</SelectItem>
+            <SelectContent className="bg-indigo-900 border-indigo-700 text-white">
+              <SelectItem value="3">3s Timer</SelectItem>
+              <SelectItem value="5">5s Timer</SelectItem>
+              <SelectItem value="10">10s Timer</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -81,9 +80,10 @@ const CameraControls: React.FC<CameraControlsProps> = ({
         <Button
           onClick={() => fileInputRef.current?.click()}
           variant="outline"
-          className="flex items-center space-x-2"
+          size="sm"
+          className="flex-1 min-w-[140px] bg-white/10 border-white/10 text-white hover:bg-white/20 rounded-2xl h-11 font-bold text-xs"
         >
-          <Upload className="h-4 w-4" />
+          <Upload className="h-4 w-4 mr-2" />
           <span>Upload Photos</span>
         </Button>
 
@@ -97,43 +97,48 @@ const CameraControls: React.FC<CameraControlsProps> = ({
         />
       </div>
 
-      {/* Video Controls - Top Right */}
-      <div className="absolute top-4 right-4 z-10 flex space-x-2">
-        <Button
-          onClick={() => setIsMinimized(!isMinimized)}
-          size="sm"
-          variant="secondary"
-          className="bg-white/80 hover:bg-white/90"
-          title={isMinimized ? "Maximize" : "Minimize"}
-        >
-          {isMinimized ? <Maximize className="h-4 w-4" /> : <Minimize className="h-4 w-4" />}
-        </Button>
-      </div>
-
-      {/* Capture Button */}
-      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-30">
+      {/* Main Action Area */}
+      <div className="w-full flex justify-center py-2 relative">
         <Button
           onClick={onStartCountdown}
           disabled={isCapturing || currentPhotoIndex >= photoCount}
           size="lg"
-          className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white px-8 py-4 rounded-full shadow-xl transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full h-16 md:h-20 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:opacity-90 text-white rounded-3xl shadow-2xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed group"
         >
           {isCapturing ? (
-            <>
-              <Timer className="mr-2 h-5 w-5 animate-spin" />
-              Capturing...
-            </>
+            <div className="flex items-center space-x-3">
+              <Timer className="h-6 w-6 md:h-8 md:w-8 animate-spin" />
+              <span className="text-lg md:text-2xl font-black">GET READY!</span>
+            </div>
           ) : currentPhotoIndex >= photoCount ? (
-            "All Photos Captured!"
+            <span className="text-lg md:text-xl font-black">GO TO NEXT STEP →</span>
           ) : (
-            <>
-              <Camera className="mr-2 h-5 w-5" />
-              Capture Photo {currentPhotoIndex + 1}
-            </>
+            <div className="flex items-center space-x-3">
+              <div className="bg-white/20 p-2 rounded-xl group-hover:scale-110 transition-transform">
+                <Camera className="h-6 w-6 md:h-8 md:w-8" />
+              </div>
+              <div className="text-left leading-tight">
+                <p className="text-sm font-bold opacity-70 uppercase tracking-widest">Strike a Pose!</p>
+                <p className="text-xl md:text-2xl font-black">CAPTURE SHOT {currentPhotoIndex + 1}</p>
+              </div>
+            </div>
           )}
         </Button>
+
+        {/* Minimize Button */}
+        <div className="absolute -top-12 right-0 md:static md:mt-2">
+          <Button
+            onClick={() => setIsMinimized(!isMinimized)}
+            size="icon"
+            variant="ghost"
+            className="text-white hover:bg-white/10"
+            title={isMinimized ? "Maximize" : "Minimize"}
+          >
+            {isMinimized ? <Maximize className="h-6 w-6" /> : <Minimize className="h-6 w-6" />}
+          </Button>
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 
