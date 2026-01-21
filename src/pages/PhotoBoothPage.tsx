@@ -1,12 +1,13 @@
 import { useState, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Download } from "lucide-react";
+import { ArrowLeft, Download, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import LayoutSelector from "@/components/LayoutSelector";
 import CameraCapture from "@/components/CameraCapture";
 import FrameColorSelector from "@/components/FrameColorSelector";
+import confetti from "canvas-confetti";
 
 type Step = "layout" | "camera" | "frame" | "download";
 
@@ -50,9 +51,10 @@ const PhotoBoothPage = () => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    /* 1. Initialise canvas */
-    const stripWidth = 400;
-    const stripHeight = 600;
+    /* 1. Initialise canvas with higher resolution for printing quality */
+    const scaleFactor = 2; // 2x scale for high DPI export
+    const stripWidth = 400 * scaleFactor;
+    const stripHeight = 600 * scaleFactor;
     canvas.width = stripWidth;
     canvas.height = stripHeight;
 
@@ -60,7 +62,7 @@ const PhotoBoothPage = () => {
     if (selectedFrameColor.includes("gradient")) {
       const gradient = ctx.createLinearGradient(0, 0, stripWidth, stripHeight);
 
-      if (selectedFrameColor.includes("rainbow")) {
+      if (selectedFrameColor.includes("rainbow") || selectedFrameColor.includes("Rainbow")) {
         gradient.addColorStop(0, "#ff0000");
         gradient.addColorStop(0.16, "#ff8000");
         gradient.addColorStop(0.33, "#ffff00");
@@ -68,9 +70,21 @@ const PhotoBoothPage = () => {
         gradient.addColorStop(0.66, "#0000ff");
         gradient.addColorStop(0.83, "#8000ff");
         gradient.addColorStop(1, "#ff00ff");
-      } else if (selectedFrameColor.includes("gold")) {
+      } else if (selectedFrameColor.includes("gold") || selectedFrameColor.includes("Gold")) {
         gradient.addColorStop(0, "#FFD700");
+        gradient.addColorStop(0.5, "#FEE101");
         gradient.addColorStop(1, "#FFA500");
+      } else if (selectedFrameColor.includes("silver") || selectedFrameColor.includes("Silver")) {
+        gradient.addColorStop(0, "#C0C0C0");
+        gradient.addColorStop(0.5, "#E8E8E8");
+        gradient.addColorStop(1, "#808080");
+      } else if (selectedFrameColor.includes("Sunset")) {
+        gradient.addColorStop(0, "#F093FB");
+        gradient.addColorStop(1, "#F5576C");
+      } else if (selectedFrameColor.includes("Midnight")) {
+        gradient.addColorStop(0, "#2E3192");
+        gradient.addColorStop(0.5, "#1BFFFF");
+        gradient.addColorStop(1, "#00FF00");
       } else {
         gradient.addColorStop(0, "#FFD700");
         gradient.addColorStop(1, "#FFA500");
@@ -81,36 +95,70 @@ const PhotoBoothPage = () => {
     }
     ctx.fillRect(0, 0, stripWidth, stripHeight);
 
-
-
     /* 4. Draw the photos */
-    const outerMargin = 10;
+    const outerMargin = 15 * scaleFactor;
     const innerWidth = stripWidth - outerMargin * 2;
     const innerHeight = stripHeight - outerMargin * 2;
 
-    const photoMargin = 20;
-    const photoSpacing = 10;
-    const availableHeight = innerHeight - photoMargin * 2 - 60; // 60px reserved for footer
+    const photoMargin = 15 * scaleFactor;
+    const photoSpacing = 12 * scaleFactor;
+    // Reserved space for footer (increased)
+    const footerHeight = 85 * scaleFactor;
+    const availableHeightForPhotos = innerHeight - footerHeight - photoSpacing;
+
     const photoHeight =
-      (availableHeight - photoSpacing * (capturedPhotos.length - 1)) /
+      (availableHeightForPhotos - (capturedPhotos.length - 1) * photoSpacing) /
       capturedPhotos.length;
-    const photoWidth = innerWidth - photoMargin * 2;
+    const photoWidth = innerWidth;
 
     const promises = capturedPhotos.map((photoUrl, index) => {
       return new Promise<void>((resolve) => {
         const img = new Image();
         img.onload = () => {
+          ctx.save();
+
+          const x = outerMargin;
+          const y = outerMargin + index * (photoHeight + photoSpacing);
+
+          // Draw shadows for photos
+          ctx.shadowColor = "rgba(0,0,0,0.3)";
+          ctx.shadowBlur = 15 * scaleFactor;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 4 * scaleFactor;
+
+          // Draw white background for each photo (Polaroid style)
+          const polaroidPadding = 6 * scaleFactor;
+          ctx.fillStyle = "#FFFFFF";
+          ctx.fillRect(
+            x - polaroidPadding,
+            y - polaroidPadding,
+            photoWidth + polaroidPadding * 2,
+            photoHeight + polaroidPadding * 2
+          );
+
+          ctx.restore();
+
+          // Set filter before drawing the image
+          ctx.save();
           ctx.filter = getFilterCSS(selectedFilter);
 
-          const x = outerMargin + photoMargin;
-          const y =
-            outerMargin + photoMargin + index * (photoHeight + photoSpacing);
-
-          /* optional subtle light‑grey border for each shot */
-          ctx.fillStyle = "#f0f0f0";
-          ctx.fillRect(x - 2, y - 2, photoWidth + 4, photoHeight + 4);
+          // Clip image to rounded rect
+          const radius = 4 * scaleFactor;
+          ctx.beginPath();
+          ctx.moveTo(x + radius, y);
+          ctx.lineTo(x + photoWidth - radius, y);
+          ctx.quadraticCurveTo(x + photoWidth, y, x + photoWidth, y + radius);
+          ctx.lineTo(x + photoWidth, y + photoHeight - radius);
+          ctx.quadraticCurveTo(x + photoWidth, y + photoHeight, x + photoWidth - radius, y + photoHeight);
+          ctx.lineTo(x + radius, y + photoHeight);
+          ctx.quadraticCurveTo(x, y + photoHeight, x, y + photoHeight - radius);
+          ctx.lineTo(x, y + radius);
+          ctx.quadraticCurveTo(x, y, x + radius, y);
+          ctx.closePath();
+          ctx.clip();
 
           ctx.drawImage(img, x, y, photoWidth, photoHeight);
+          ctx.restore();
           resolve();
         };
         img.crossOrigin = "anonymous";
@@ -122,44 +170,85 @@ const PhotoBoothPage = () => {
     Promise.all(promises).then(() => {
       ctx.filter = "none";
 
-      const footerY = stripHeight - outerMargin - 40;
+      const footerY = stripHeight - footerHeight - outerMargin;
+      const cornerRadius = 12 * scaleFactor;
 
-      const footerGradient = ctx.createLinearGradient(
-        0,
-        footerY,
-        0,
-        footerY + 40
-      );
-      footerGradient.addColorStop(0, "#8B5CF6");
-      footerGradient.addColorStop(1, "#EC4899");
+      // Professional Footer Background with rounded top corners
+      ctx.save();
+      ctx.fillStyle = "rgba(0,0,0,0.15)";
+      ctx.beginPath();
+      ctx.moveTo(outerMargin + cornerRadius, footerY);
+      ctx.lineTo(outerMargin + innerWidth - cornerRadius, footerY);
+      ctx.quadraticCurveTo(outerMargin + innerWidth, footerY, outerMargin + innerWidth, footerY + cornerRadius);
+      ctx.lineTo(outerMargin + innerWidth, footerY + footerHeight);
+      ctx.lineTo(outerMargin, footerY + footerHeight);
+      ctx.lineTo(outerMargin, footerY + cornerRadius);
+      ctx.quadraticCurveTo(outerMargin, footerY, outerMargin + cornerRadius, footerY);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
 
-      ctx.fillStyle = footerGradient;
-      ctx.fillRect(outerMargin, footerY, innerWidth, 40);
-
+      // Logo Text
       ctx.fillStyle = "#FFFFFF";
-      ctx.font = "bold 16px Arial";
+      ctx.font = `bold ${24 * scaleFactor}px Arial`;
       ctx.textAlign = "center";
-      ctx.fillText("📸 Snapture", stripWidth / 2, footerY + 18);
+      ctx.shadowColor = "rgba(0,0,0,0.4)";
+      ctx.shadowBlur = 4 * scaleFactor;
+      ctx.fillText("📸 SNAPTURE", stripWidth / 2, footerY + 40 * scaleFactor);
 
-      ctx.font = "12px Arial";
+      // Date Text
+      ctx.shadowBlur = 0;
+      ctx.font = `${14 * scaleFactor}px Arial`;
+      ctx.fillStyle = "rgba(255,255,255,0.9)";
       const now = new Date();
       ctx.fillText(
-        `${now.toLocaleDateString()} • ${now.toLocaleTimeString([], {
+        `${now.toLocaleDateString('en-GB')}  •  ${now.toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
         })}`,
         stripWidth / 2,
-        footerY + 32
+        footerY + 62 * scaleFactor
       );
 
       /* download */
       const link = document.createElement("a");
-      link.download = `Snapture-strip-${Date.now()}.png`;
+      link.download = `Snapture-Magic-${Date.now()}.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
-      toast.success("📥 Photo strip downloaded successfully!");
+
+      confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#FF1493', '#00BFFF', '#FFD700']
+      });
+
+      toast.success("✨ Your masterpiece has been saved!");
     });
   }, [capturedPhotos, selectedFilter, selectedFrameColor]);
+
+  const handleShare = async () => {
+    if (capturedPhotos.length === 0 || !canvasRef.current) return;
+
+    try {
+      const canvas = canvasRef.current;
+      const dataUrl = canvas.toDataURL("image/png");
+      const blob = await (await fetch(dataUrl)).blob();
+      const file = new File([blob], 'snapture.png', { type: 'image/png' });
+
+      if (navigator.share) {
+        await navigator.share({
+          files: [file],
+          title: 'My Snapture Photo Strip',
+          text: 'Check out my amazing photo strip from Snapture! 📸✨',
+        });
+      } else {
+        toast.info("Sharing not supported on this browser, but you can download!");
+      }
+    } catch (error) {
+      console.error("Share failed", error);
+    }
+  };
 
   /* ───────────────────── Helpers & Reset ───────────────────── */
 
@@ -279,13 +368,12 @@ const PhotoBoothPage = () => {
               return (
                 <div key={step} className="flex items-center">
                   <div
-                    className={`relative w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-300 ${
-                      isActive
-                        ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg scale-110"
-                        : isCompleted
+                    className={`relative w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-300 ${isActive
+                      ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg scale-110"
+                      : isCompleted
                         ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg"
                         : "bg-white/20 text-white/60 backdrop-blur-sm"
-                    }`}
+                      }`}
                   >
                     {isCompleted ? "✅" : index + 1}
                     {isActive && (
@@ -294,11 +382,10 @@ const PhotoBoothPage = () => {
                   </div>
                   {index < 3 && (
                     <div
-                      className={`w-16 h-1 mx-2 rounded-full transition-all duration-300 ${
-                        isCompleted
-                          ? "bg-gradient-to-r from-green-500 to-emerald-500"
-                          : "bg-white/20"
-                      }`}
+                      className={`w-16 h-1 mx-2 rounded-full transition-all duration-300 ${isCompleted
+                        ? "bg-gradient-to-r from-green-500 to-emerald-500"
+                        : "bg-white/20"
+                        }`}
                     />
                   )}
                 </div>
@@ -382,14 +469,26 @@ const PhotoBoothPage = () => {
                   Perfect shots with beautiful styling&nbsp;&mdash; ready to
                   share!
                 </p>
-                <Button
-                  onClick={downloadPhoto}
-                  size="lg"
-                  className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-12 py-6 text-xl font-bold shadow-2xl hover:shadow-green-500/50 transform hover:scale-110 transition-all duration-300 rounded-full"
-                >
-                  <Download className="mr-3 h-6 w-6" />
-                  📥 Download Your Masterpiece
-                </Button>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                  <Button
+                    onClick={downloadPhoto}
+                    size="lg"
+                    className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-10 py-6 text-xl font-bold shadow-2xl hover:shadow-green-500/50 transform hover:scale-105 transition-all duration-300 rounded-xl"
+                  >
+                    <Download className="mr-3 h-6 w-6" />
+                    📥 Save to Device
+                  </Button>
+
+                  <Button
+                    onClick={handleShare}
+                    variant="outline"
+                    size="lg"
+                    className="border-2 border-white/30 text-white hover:bg-white/10 px-10 py-6 text-xl font-bold shadow-2xl backdrop-blur-sm transform hover:scale-105 transition-all duration-300 rounded-xl"
+                  >
+                    <Share2 className="mr-3 h-6 w-6" />
+                    📱 Share Strip
+                  </Button>
+                </div>
               </div>
             </div>
           )}

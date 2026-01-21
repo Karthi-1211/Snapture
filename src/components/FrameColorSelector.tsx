@@ -11,22 +11,22 @@ interface FrameColorSelectorProps {
 const colorPalette = [
   { name: "White", color: "#FFFFFF", category: "Basic" },
   { name: "Black", color: "#000000", category: "Basic" },
-  { name: "Pink", color: "#FF69B4", category: "Basic" },
-  { name: "Light Blue", color: "#87CEEB", category: "Basic" },
-  { name: "Yellow", color: "#FFFF00", category: "Basic" },
-  { name: "Light Green", color: "#90EE90", category: "Basic" },
-  { name: "Purple", color: "#9370DB", category: "Basic" },
-  { name: "Orange", color: "#FFA500", category: "Basic" },
-  { name: "Red", color: "#FF0000", category: "Basic" },
-  { name: "Navy", color: "#000080", category: "Basic" },
-  { name: "Gold", color: "linear-gradient(45deg, #FFD700, #FFA500)", category: "Metallic", isGradient: true },
-  { name: "Silver", color: "linear-gradient(45deg, #C0C0C0, #808080)", category: "Metallic", isGradient: true },
-  { name: "Rose Gold", color: "linear-gradient(45deg, #E8B4CB, #D4AF37)", category: "Metallic", isGradient: true },
-  { name: "Bronze", color: "linear-gradient(45deg, #CD7F32, #8B4513)", category: "Metallic", isGradient: true },
-  { name: "Rainbow", color: "linear-gradient(45deg, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff00ff, #ff0080)", category: "Special", isGradient: true },
-  { name: "Sunset", color: "linear-gradient(45deg, #FF6B6B, #FF8E53, #FF6B9D)", category: "Special", isGradient: true },
-  { name: "Ocean", color: "linear-gradient(45deg, #00C9FF, #92FE9D)", category: "Special", isGradient: true },
-  { name: "Forest", color: "linear-gradient(45deg, #134E5E, #71B280)", category: "Special", isGradient: true },
+  { name: "Soft Pink", color: "#FFB6C1", category: "Basic" },
+  { name: "Sky Blue", color: "#87CEEB", category: "Basic" },
+  { name: "Royal Purple", color: "#6A5ACD", category: "Basic" },
+  { name: "Mint Green", color: "#98FB98", category: "Basic" },
+  { name: "Slate Grey", color: "#708090", category: "Basic" },
+  { name: "Deep Navy", color: "#000080", category: "Basic" },
+  { name: "Pure Gold", color: "linear-gradient(45deg, #FFD700, #FEE101, #FFA500)", category: "Metallic", isGradient: true },
+  { name: "Silver Fox", color: "linear-gradient(45deg, #C0C0C0, #E8E8E8, #808080)", category: "Metallic", isGradient: true },
+  { name: "Rose Gold Elegance", color: "linear-gradient(45deg, #E8B4CB, #F7CAC9, #D4AF37)", category: "Metallic", isGradient: true },
+  { name: "Cosmic Bronze", color: "linear-gradient(45deg, #CD7F32, #E6BE8A, #8B4513)", category: "Metallic", isGradient: true },
+  { name: "Platinum Luxe", color: "linear-gradient(45deg, #E5E4E2, #FFFFFF, #B0C4DE)", category: "Metallic", isGradient: true },
+  { name: "Rainbow Bridge", color: "linear-gradient(45deg, #ff0000, #ff8000, #ffff00, #00ff00, #0000ff, #ff00ff)", category: "Special", isGradient: true },
+  { name: "Electric Neon", color: "linear-gradient(45deg, #FF00FF, #00FFFF, #00FF00)", category: "Special", isGradient: true },
+  { name: "Cotton Candy", color: "linear-gradient(45deg, #FFC0CB, #E0FFFF, #FFB6C1)", category: "Special", isGradient: true },
+  { name: "Midnight Aurora", color: "linear-gradient(45deg, #2E3192, #1BFFFF, #00FF00)", category: "Special", isGradient: true },
+  { name: "Sunset Blaze", color: "linear-gradient(45deg, #F093FB, #F5576C)", category: "Special", isGradient: true },
 ];
 
 const getFilterCSS = (filter: string) => {
@@ -92,11 +92,10 @@ const FrameColorSelector: React.FC<FrameColorSelectorProps> = ({ photos, filter,
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                selectedCategory === category
+              className={`px-4 py-2 rounded-lg font-medium transition-all ${selectedCategory === category
                   ? "bg-purple-500 text-white shadow-lg"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
+                }`}
             >
               {category}
             </button>
@@ -109,11 +108,10 @@ const FrameColorSelector: React.FC<FrameColorSelectorProps> = ({ photos, filter,
             <button
               key={colorItem.name}
               onClick={() => handleColorSelect(colorItem.color)}
-              className={`aspect-square rounded-lg border-4 transition-all hover:scale-110 ${
-                selectedColor === colorItem.color
+              className={`aspect-square rounded-lg border-4 transition-all hover:scale-110 ${selectedColor === colorItem.color
                   ? "border-purple-500 shadow-lg"
                   : "border-gray-300 hover:border-gray-400"
-              }`}
+                }`}
               style={{
                 background: colorItem.isGradient ? colorItem.color : colorItem.color,
               }}

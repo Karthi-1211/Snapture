@@ -98,6 +98,26 @@ All colors MUST be HSL.
   }
 }
 
+@layer utilities {
+  .animate-spin-slow {
+    animation: spin 8s linear infinite;
+  }
+  .animate-pulse-slow {
+    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  .shadow-glow {
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.5), 0 0 30px rgba(236, 72, 153, 0.3);
+  }
+  .bg-glass {
+    @apply bg-white/10 backdrop-blur-lg border border-white/20;
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
